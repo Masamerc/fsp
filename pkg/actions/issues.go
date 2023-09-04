@@ -5,10 +5,38 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/cli/go-gh/v2"
 	"github.com/urfave/cli/v2"
 )
+
+const issueTemplate string = `
+# test h1
+%BODY%
+
+# test h2
+h2 content
+`
+
+func createTempBodyFile(body string) (string, error) {
+
+	issueBody := strings.Replace(string(issueTemplate), "%BODY%", body, 1)
+
+	tempFile, err := os.CreateTemp("", "issue-body")
+	if err != nil {
+		return "", err
+	}
+
+	_, err = tempFile.Write([]byte(issueBody))
+	if err != nil {
+		return "", err
+	}
+
+	tempFile.Close()
+	fileName := tempFile.Name()
+	return fileName, nil
+}
 
 type Issue struct {
 	Title    string
@@ -61,13 +89,18 @@ func readIssues(path string) ([]Issue, error) {
 
 func createIssue(issue Issue, labels []string, project string) {
 
+	bodyFile, err := createTempBodyFile(issue.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	args := []string{
 		"issue",
 		"create",
 		"--title",
 		issue.Title,
-		"--body",
-		issue.Body,
+		"--body-file",
+		bodyFile,
 		"--repo",
 		issue.Repo,
 		"--assignee",
