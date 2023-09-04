@@ -29,6 +29,11 @@ func Commands() {
 					Aliases: []string{"l"},
 					Usage:   "labels to add",
 				},
+				&cli.StringFlag{
+					Name:    "project-id",
+					Aliases: []string{"p"},
+					Usage:   "project id",
+				},
 			},
 			Action: actions.BulkCreateIssues,
 		},

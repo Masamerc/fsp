@@ -11,9 +11,10 @@ import (
 )
 
 type Issue struct {
-	Title string
-	Body  string
-	Repo  string
+	Title    string
+	Body     string
+	Repo     string
+	Assignee string
 }
 
 func readIssues(path string) ([]Issue, error) {
@@ -47,9 +48,10 @@ func readIssues(path string) ([]Issue, error) {
 		}
 
 		issue := Issue{
-			Title: record[0],
-			Body:  record[1],
-			Repo:  record[2],
+			Title:    record[0],
+			Body:     record[1],
+			Repo:     record[2],
+			Assignee: record[3],
 		}
 		issues = append(issues, issue)
 	}
@@ -57,20 +59,19 @@ func readIssues(path string) ([]Issue, error) {
 	return issues, nil
 }
 
-func createIssue(issue Issue, labels []string) {
-
-	title := fmt.Sprintf("\"%s\"", issue.Title)
-	body := fmt.Sprintf("\"%s\"", issue.Body)
+func createIssue(issue Issue, labels []string, project string) {
 
 	args := []string{
 		"issue",
 		"create",
 		"--title",
-		title,
+		issue.Title,
 		"--body",
-		body,
+		issue.Body,
 		"--repo",
 		issue.Repo,
+		"--assignee",
+		issue.Assignee,
 	}
 
 	if len(labels) > 0 {
@@ -79,13 +80,17 @@ func createIssue(issue Issue, labels []string) {
 		}
 	}
 
+	if project != "" {
+		args = append(args, "--project", project)
+	}
+
 	resp, _, err := gh.Exec(args...)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("issue created: %s", resp.String())
-	fmt.Printf("- repo: %s\n", issue.Repo)
-	fmt.Printf("- title: %s\n\n", issue.Title)
+	fmt.Printf("repo: %s\n", issue.Repo)
+	fmt.Printf("title: %s\n\n", issue.Title)
 }
 
 func BulkCreateIssues(c *cli.Context) error {
@@ -96,9 +101,10 @@ func BulkCreateIssues(c *cli.Context) error {
 	}
 
 	labels := c.StringSlice("labels")
+	project := c.String("project-id")
 
 	for _, issue := range issues {
-		createIssue(issue, labels)
+		createIssue(issue, labels, project)
 	}
 	return nil
 }
