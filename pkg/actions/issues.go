@@ -1,8 +1,10 @@
 package actions
 
 import (
+	"embed"
 	"encoding/csv"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -11,15 +13,21 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-const issueTemplate string = `
-# test h1
-%BODY%
-
-# test h2
-h2 content
-`
+var content embed.FS
 
 func createTempBodyFile(body string) (string, error) {
+
+	file, err := content.Open("issue-template.md")
+	if err != nil {
+		return "", err
+	}
+
+	defer file.Close()
+
+	issueTemplate, err := io.ReadAll(file)
+	if err != nil {
+		return "", err
+	}
 
 	issueBody := strings.Replace(string(issueTemplate), "%BODY%", body, 1)
 
