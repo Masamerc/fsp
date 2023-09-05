@@ -20,9 +20,10 @@ func Commands() {
 			Usage: "create issues from a csv file",
 			Flags: []cli.Flag{
 				&cli.StringFlag{
-					Name:    "file",
-					Aliases: []string{"f"},
-					Usage:   "path to input csv file",
+					Name:     "file",
+					Aliases:  []string{"f"},
+					Usage:    "path to input csv file",
+					Required: true,
 				},
 				&cli.StringSliceFlag{
 					Name:    "labels",
