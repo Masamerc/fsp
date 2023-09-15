@@ -132,13 +132,10 @@ func createIssue(issue Issue, labels []string, project string) {
 		args = append(args, "--milestone", issue.Milestone)
 	}
 
-	fmt.Println(args)
 	resp, _, err := gh.Exec(args...)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	// debug
 
 	fmt.Printf("issue created: %s", resp.String())
 	fmt.Printf("repo: %s\n", issue.Repo)
