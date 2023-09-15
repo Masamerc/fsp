@@ -25,8 +25,8 @@ OPTIONS:
 - `issue-template.md` will be used as the template, `%BODY%` will be replaced with body texts in csv file
 - your csv file needs to follow the following format
 ```csv
-title,body,repo,assignee
-my issue title,my issue body,Masamerc/fsp,Masamerc
+title,body,repo,assignee,milestone
+my issue title,my issue body,Masamerc/fsp,Masamerc,milestone1
 ```
 
 

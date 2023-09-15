@@ -13,11 +13,12 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+//go:embed templates/issue-template.md
 var content embed.FS
 
 func createTempBodyFile(body string) (string, error) {
 
-	file, err := content.Open("issue-template.md")
+	file, err := content.Open("templates/issue-template.md")
 	if err != nil {
 		return "", err
 	}
@@ -47,10 +48,11 @@ func createTempBodyFile(body string) (string, error) {
 }
 
 type Issue struct {
-	Title    string
-	Body     string
-	Repo     string
-	Assignee string
+	Title     string
+	Body      string
+	Repo      string
+	Assignee  string
+	Milestone string
 }
 
 func readIssues(path string) ([]Issue, error) {
@@ -84,10 +86,11 @@ func readIssues(path string) ([]Issue, error) {
 		}
 
 		issue := Issue{
-			Title:    record[0],
-			Body:     record[1],
-			Repo:     record[2],
-			Assignee: record[3],
+			Title:     record[0],
+			Body:      record[1],
+			Repo:      record[2],
+			Assignee:  record[3],
+			Milestone: record[4],
 		}
 		issues = append(issues, issue)
 	}
@@ -125,10 +128,18 @@ func createIssue(issue Issue, labels []string, project string) {
 		args = append(args, "--project", project)
 	}
 
+	if issue.Milestone != "" {
+		args = append(args, "--milestone", issue.Milestone)
+	}
+
+	fmt.Println(args)
 	resp, _, err := gh.Exec(args...)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// debug
+
 	fmt.Printf("issue created: %s", resp.String())
 	fmt.Printf("repo: %s\n", issue.Repo)
 	fmt.Printf("title: %s\n\n", issue.Title)
