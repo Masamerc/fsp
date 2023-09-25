@@ -11,7 +11,7 @@ import (
 func Commands() {
 	app := &cli.App{
 		Name:  "fsp",
-		Usage: "frozen sprint planning helper (v.0.1.0)",
+		Usage: "sprint planning helper (v.0.1.0)",
 	}
 
 	app.Commands = []*cli.Command{
