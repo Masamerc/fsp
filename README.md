@@ -1,5 +1,5 @@
 # fsp
-Frozen sprint planning helper: wrapper for gh cli
+A sprint planning helper: wrapper for gh cli
 
 # Usage
 Currently only bulk-create command is supported.
