@@ -1,6 +1,8 @@
 module github.com/Masmerc/fsp
 
-go 1.20
+go 1.21
+
+toolchain go1.22.0
 
 require (
 	github.com/cli/go-gh/v2 v2.3.0
